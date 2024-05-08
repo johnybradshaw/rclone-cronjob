@@ -1,4 +1,4 @@
-# rclone-cronjob
+ rclone-cronjob
 
 A Kubernetes cronjob to sync two object stores using [rclone](http://rclone.org).
 
@@ -34,3 +34,12 @@ Update the `secrets.yaml` with your credentials:
 ```
 
 Then run `kubectl apply -f .`
+
+### Notes
+
+You can adjust the sync frequency by updating the schedule in `cronjob.yaml`, e.g.:
+
+- `schedule: "*/5 * * * *" # Run every 5 minutes`
+- `schedule: "*/10 * * * *" # Run every 10 minutes`
+- `schedule: "0 * * * *" # Run every hour`
+- `schedule: "0 0 * * *" # Run every 5 minutes`
