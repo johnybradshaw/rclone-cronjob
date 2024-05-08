@@ -1,8 +1,9 @@
 # rclone-cronjob
 
-A kubernetes cronjob to sync two object stores using rclone
+A Kubernetes cronjob to sync two object stores using [rclone](http://rclone.org).
 
 - Only supports S3, but may work with other object stores
+- Runs every 5 minutes
 
 ## How to use
 
