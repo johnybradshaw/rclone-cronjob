@@ -1,0 +1,115 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rclone-cronjob
+  namespace: rclone-cronjob
+spec:
+  concurrencyPolicy: Forbid # Prevent multiple jobs from running at once
+  schedule: "*/5 * * * *" # Run every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          securityContext: 
+            runAsNonRoot: true # Do not run as root
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000 
+            seccompProfile:
+              type: RuntimeDefault # Use default seccomp profile
+          containers:
+          - name: rclone-cronjob
+            image: rclone/rclone:latest # Use the latest rclone
+            securityContext:
+                allowPrivilegeEscalation: false # Do not allow privilege escalation
+                readOnlyRootFilesystem: true # Do not allow writes to root
+                capabilities:
+                  drop: ["ALL"] # Drop all capabilities
+            env:
+            # Source and destination config
+            - name: SOURCE_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: SOURCE_TYPE
+            - name: SOURCE_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: SOURCE_PROVIDER
+            - name: SOURCE_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: SOURCE_BUCKET
+            - name: SOURCE_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: SOURCE_ENDPOINT
+            - name: DESTINATION_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: DESTINATION_TYPE
+            - name: DESTINATION_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: DESTINATION_PROVIDER
+            - name: DESTINATION_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: DESTINATION_BUCKET
+            - name: DESTINATION_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: DESTINATION_ENDPOINT
+            # rclone options
+            - name: RCLONE_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: RCLONE_OPTS
+            - name: RCLONE_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: RCLONE_LOG_LEVEL
+            - name: RCLONE_METHOD
+              valueFrom:
+                configMapKeyRef:
+                  name: rclone-config
+                  key: RCLONE_METHOD
+            # Source and destination credentials
+            - name: SOURCE_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rclone-secret
+                  key: source_access_key
+            - name: SOURCE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rclone-secret
+                  key: source_secret_key
+            - name: DESTINATION_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rclone-secret
+                  key: destination_access_key
+            - name: DESTINATION_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rclone-secret
+                  key: destination_secret_key
+            command:
+              - /bin/sh
+              - -c
+              - |
+                  rclone ${RCLONE_OPTS} --log-level ${RCLONE_LOG_LEVEL} ${RCLONE_METHOD} \
+                   :${SOURCE_TYPE},provider=${SOURCE_PROVIDER},access_key_id=${SOURCE_ACCESS_KEY},secret_access_key=${SOURCE_SECRET_KEY},endpoint=${SOURCE_ENDPOINT},bucket_acl=private:${SOURCE_BUCKET}/ \
+                   :${DESTINATION_TYPE},provider=${DESTINATION_PROVIDER},access_key_id=${DESTINATION_ACCESS_KEY},secret_access_key=${DESTINATION_SECRET_KEY},endpoint=${DESTINATION_ENDPOINT},bucket_acl=private:${DESTINATION_BUCKET}/ 
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
