@@ -20,11 +20,22 @@ spec:
           containers:
           - name: rclone-cronjob
             image: rclone/rclone:latest # Use the latest rclone
+            resources:
+              requests:
+                cpu: 200m
+                memory: 200Mi
+              limits:
+                cpu: 800m
+                memory: 800Mi
             securityContext:
-                allowPrivilegeEscalation: false # Do not allow privilege escalation
-                readOnlyRootFilesystem: true # Do not allow writes to root
-                capabilities:
-                  drop: ["ALL"] # Drop all capabilities
+              runAsNonRoot: true # Do not run as root
+              runAsUser: 10000
+              runAsGroup: 1000
+              fsGroup: 1000 
+              allowPrivilegeEscalation: false # Do not allow privilege escalation
+              readOnlyRootFilesystem: true # Do not allow writes to root
+              capabilities:
+                drop: ["ALL"] # Drop all capabilities
             env:
             # Source and destination config
             - name: SOURCE_TYPE
