@@ -31,7 +31,6 @@ spec:
               runAsNonRoot: true # Do not run as root
               runAsUser: 10000
               runAsGroup: 1000
-              fsGroup: 1000 
               allowPrivilegeEscalation: false # Do not allow privilege escalation
               readOnlyRootFilesystem: true # Do not allow writes to root
               capabilities:

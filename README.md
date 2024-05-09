@@ -7,7 +7,7 @@ A Kubernetes cronjob to sync two object stores using [rclone](http://rclone.org)
 
 ## How to use
 
-Update the `configmap.yaml` with your rclone config, for example:
+Update the `02-configmap.yaml` with your rclone config, for example:
 
 ```yaml
   RCLONE_OPTS: "--fast-list"
@@ -24,7 +24,7 @@ Update the `configmap.yaml` with your rclone config, for example:
   DESTINATION_ENDPOINT: nl-ams-1.linodeobjects.com
 ```
 
-Update the `secrets.yaml` with your credentials:
+Update the `03-secrets.yaml` with your credentials:
 
 ```yaml
   source_access_key: # replace with your source access key
@@ -37,7 +37,7 @@ Then run `kubectl apply -f .`
 
 ### Notes
 
-You can adjust the sync frequency by updating the schedule in `cronjob.yaml`, e.g.:
+You can adjust the sync frequency by updating the schedule in `04-cronjob.yaml`, e.g.:
 
 - `schedule: "*/5 * * * *" # Run every 5 minutes`
 - `schedule: "*/10 * * * *" # Run every 10 minutes`
