@@ -7,6 +7,8 @@ A Kubernetes cronjob to sync two object stores using [rclone](http://rclone.org)
 
 ## How to use
 
+Ensure you are able to use [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/) as this will simplify deployment.
+
 Update the `02-configmap.yaml` with your rclone config, for example:
 
 ```yaml
@@ -33,7 +35,7 @@ Update the `03-secrets.yaml` with your credentials:
   destination_secret_key: # replace with your destination secret key
 ```
 
-Then run `kubectl apply -f .`
+Then run `kubectl apply -k .`
 
 ### Notes
 

@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rclone-cronjob-network-policy
+  namespace: rclone-cronjob
+spec:
+  podSelector:
+    matchLabels:
+      app: rclone-cronjob
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress: [] # no ingress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except: # exclude nodes from the network
+        - 10.0.0.0/8 # local network
+        - 172.16.0.0/12 # local network
+        - 192.168.0.0/16 # local network
+    ports:
+    - protocol: TCP
+      port: 443 # HTTPS
+  - to: # allow DNS requests
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+    ports:
+      - protocol: UDP
+        port: 53
+      - protocol: TCP
+        port: 53
