@@ -9,6 +9,10 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            app: rclone-cronjob
+            instance: rclone-cronjob
         spec:
           securityContext: 
             runAsNonRoot: true # Do not run as root
@@ -121,5 +125,5 @@ spec:
                   rclone ${RCLONE_OPTS} --log-level ${RCLONE_LOG_LEVEL} ${RCLONE_METHOD} \
                    :${SOURCE_TYPE},provider=${SOURCE_PROVIDER},access_key_id=${SOURCE_ACCESS_KEY},secret_access_key=${SOURCE_SECRET_KEY},endpoint=${SOURCE_ENDPOINT},bucket_acl=private:${SOURCE_BUCKET}/ \
                    :${DESTINATION_TYPE},provider=${DESTINATION_PROVIDER},access_key_id=${DESTINATION_ACCESS_KEY},secret_access_key=${DESTINATION_SECRET_KEY},endpoint=${DESTINATION_ENDPOINT},bucket_acl=private:${DESTINATION_BUCKET}/ 
-            imagePullPolicy: IfNotPresent
+            imagePullPolicy: Always
           restartPolicy: OnFailure
