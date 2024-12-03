@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Default namespace
+namespace: rclone-cronjob
+
+# Apply labels to all resources
+labels:
+  - pairs:
+      app: rclone-cronjob
+      instance: rclone-cronjob
+
+# Base images
+images:
+  - name: rclone/rclone
+    newName: rclone/rclone
+    newTag: 1.68.2 # https://hub.docker.com/r/rclone/rclone/tags
+
+# Resources to apply
+resources:
+  - namespace.yaml
+  - networkPolicy.yaml
+  - cronjob.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true

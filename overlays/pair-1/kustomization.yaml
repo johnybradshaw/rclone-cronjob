@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+nameSuffix: -pair-1 # Update to your pair number or reference
+
+# Apply secrets
+secretGenerator:
+  - name: rclone-secret
+    behavior: replace
+    envs:
+      - rclone-secret.env
+    type: Opaque
+
+# Apply config
+configMapGenerator:
+  - name: rclone-config
+    behavior: replace
+    envs:
+      - rclone.properties
+
+# Apply base
+resources:
+  - ../../base
+
+# Apply transformers
+transformers:
+  - transformer-history-limits.yaml # Limit job history
+  - transformer-schedule.yaml # Update job schedule

@@ -3,45 +3,28 @@
 A Kubernetes cronjob to sync two object stores using [rclone](http://rclone.org).
 
 - Only supports S3, but may work with other object stores
-- Runs every 5 minutes
 
 ## How to use
 
 Ensure you are able to use [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/) as this will simplify deployment.
 
-Update the `02-configmap.yaml` with your rclone config, for example:
+1. Rename or duplicate the `overlays/pair-1` directory
+1. `kustomization.yaml`
+    - Update the `nameSuffix` with your pair number or reference
+1. `rclone-secret.env`
+    - Update the `rclone-secret.env` file with the credentials for both object stores
+1. `rclone.properties`
+    - Update the `rclone.properties` file with your rclone config
 
-```yaml
-  RCLONE_OPTS: "--fast-list"
-  RCLONE_LOG_LEVEL: INFO # DEBUG, INFO, WARNING, ERROR
-  RCLONE_METHOD: sync # or copy
-  # Source and destination config
-  SOURCE_TYPE: s3
-  SOURCE_PROVIDER: AWS
-  SOURCE_BUCKET: my-first-bucket
-  SOURCE_ENDPOINT: s3-accesspoint.af-south-1.amazonaws.com
-  DESTINATION_TYPE: s3
-  DESTINATION_PROVIDER: Linode
-  DESTINATION_BUCKET: my-second-bucket
-  DESTINATION_ENDPOINT: nl-ams-1.linodeobjects.com
-```
+### Optional
 
-Update the `03-secrets.yaml` with your credentials:
+1. `transformer-history-limits.yaml`
+    - Update `successfulJobsHistoryLimit` and `failedJobsHistoryLimit` with your preferred job history limits
+1. `transformer-schedule.yaml`
+    - Update `schedule` with your preferred schedule, for example: `"0 0 * * *"` will cause it to run once a day at midnight
 
-```yaml
-  source_access_key: # replace with your source access key
-  source_secret_key: # replace with your source secret key
-  destination_access_key: # replace with your destination access key
-  destination_secret_key: # replace with your destination secret key
-```
+Then run `kubectl apply -k overlays/pair-1`
 
-Then run `kubectl apply -k .`
+## How to clean up
 
-### Notes
-
-You can adjust the sync frequency by updating the schedule in `04-cronjob.yaml`, e.g.:
-
-- `schedule: "*/5 * * * *" # Run every 5 minutes`
-- `schedule: "*/10 * * * *" # Run every 10 minutes`
-- `schedule: "0 * * * *" # Run every hour`
-- `schedule: "0 0 * * *" # Run every 5 minutes`
+Run `kubectl delete -k overlays/pair-1`

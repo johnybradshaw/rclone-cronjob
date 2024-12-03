@@ -1,0 +1,15 @@
+apiVersion: builtin
+kind: PatchTransformer
+metadata:
+  name: history-limits-transformer
+patch: |
+  apiVersion: batch/v1
+  kind: CronJob
+  metadata:
+    name: rclone-cronjob
+  spec:
+    successfulJobsHistoryLimit: 30
+    failedJobsHistoryLimit: 10
+target:
+  kind: CronJob
+  name: rclone-cronjob
