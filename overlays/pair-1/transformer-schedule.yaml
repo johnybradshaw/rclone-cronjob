@@ -1,0 +1,6 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rclone-cronjob
+spec:
+  schedule: "0 * * * *" # Example: Run at the top of every hour

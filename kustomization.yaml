@@ -1,6 +1,0 @@
-resources:
-  - 01-namespace.yaml
-  - 02-configmap.yaml
-  - 03-secrets.yaml
-  - 04-networkPolicy.yaml
-  - 05-cronjob.yaml
